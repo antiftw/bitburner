@@ -1,0 +1,34 @@
+# Do network scan to find all nodes
+alias p-scan="run /src/commands/nettools/scan_public.js"
+alias b-scan="run /src/commands/nettools/scan_botnet.js"
+alias h-scan="run /src/commands/nettools/scan_hcknet.js"
+alias scan-all="run /src/commands/nettools/scan_all.js"
+
+# Do network analysis to lookup properties for nodes
+alias p-diag="run /src/commands/nettools/diag_public.js"
+alias b-diag="run /src/commands/nettools/diag_botnet.js"
+alias h-diag="run /src/commands/nettools/diag_hcknet.js"
+alias diagnose-all="run /src/commands/nettools/diagnose_all.js"
+
+# Combine scan-all and diagnose-all
+alias scan-diag="run /src/commands/nettools/scan_diag.js"
+
+# Run the Server Managers
+alias p-run="run /src/commands/handlers/run_public.js"
+alias b-run="run /src/commands/handlers/run_botnet.js"
+alias h-run="run /src/commands/handlers/run_hcknet.js"
+alias run-all="run /src/commands/handlers/run_all.js"
+
+# Budget related aliases
+alias budget-run="run /src/commands/handlers/run_budget.js"
+alias budget-add="run /src/commands/add_budget.js"
+
+# Misc aliases
+alias show-network="run /src/commands/show_network.js"
+alias network-run="run /src/commands/handlers/run_netwrk.js"
+alias spread="run /src/scripts/spread.js"
+alias hack-home="run /src/scripts/hack.js"
+
+# Core
+alias init="run /src/commands/initialize.js"
+alias main="run /src/cmd/1_init_config.js"
