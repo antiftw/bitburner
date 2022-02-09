@@ -9,9 +9,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let analyzer = new BotnetAnalyzer(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.diag_botnet);
+        let analyzer = new BotnetAnalyzer(ns, verbose);
         await analyzer.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.diagnosePublic}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'DIABOT');

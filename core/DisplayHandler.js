@@ -122,7 +122,7 @@ export class DisplayHandler{
                }
             });
         }
-   
+
         if(options.public) {
             this.logger.line();
             this.logger.log('✔️ Also showing Public');
@@ -130,19 +130,18 @@ export class DisplayHandler{
             if(options.rootOnly) {
                 this.public
                     .filter( srv => srv.rootAccess === true)
-                    .sort( (a,b) => b.money - a.money)
+                    .sort( (a,b) => b.maxMoney - a.maxMoney)
                     .forEach(srv => {
                         this.showPublicServer(srv, options.query);
                 });
                 servers = servers;
             } else {
                 this.logger.log('✔️ Also showing nodes without r00t Access');
-                this.public.sort( (a,b) => b.money - a.money).forEach(srv => {
+                this.public.sort( (a,b) => b.maxMoney - a.maxMoney).forEach(srv => {
                     this.showPublicServer(srv, options.query);
                 });
             }
         }
-        
     }
 
     /**
@@ -157,13 +156,24 @@ export class DisplayHandler{
         }
         let scripts = this.getRunningScripts(server);
         let name = '[ ' + this.logger.pad(17, server.name) + ' ] ';
+
+        let ram = this.formatRam(server);
+        let line = name + ram + scripts + marker;
+        this.ns.tprint(line);
+    }
+
+    formatRam(server) {
         let padding = String(server.maxRam).length;
         let usedRam =  this.logger.pad(padding + 3, server.usedRam) ; // needs extra padding bc of possible decimals
         let maxRam = this.logger.pad(padding, server.maxRam);
-        let ram = '[ ' + usedRam + ' / ' + maxRam + ' GB] ';
-
-        let line = name + ram + scripts + marker;
-        this.ns.tprint(line);
+        let quantifier = 'GB';
+        if(server.maxRam / 1024 > 1) {
+            padding -= 3;
+            usedRam = this.logger.pad(padding + 3, (server.usedRam / 1024).toFixed(2));
+            maxRam = this.logger.pad(padding, server.maxRam / 1024);
+            quantifier = 'TB'
+        }
+        return `[ ${usedRam} / ${maxRam} ${quantifier} ]`;
     }
 
     /**
@@ -251,7 +261,7 @@ export class DisplayHandler{
     getRunningScripts(server, icon = true) {
         let active = [];
         let iconOutput = '';
-        let ignore = ['/src/commands/show_network.js']
+        let ignore = ['/src/commands/show_network.js', '/src/commands/start.js']
         let runningScripts = this.ns.ps(server.name);
 
         for(let index = 0; index < runningScripts.length; index++) {
@@ -295,8 +305,11 @@ export class DisplayHandler{
                 return '💲💲';
             case `${path}${hackScript.file}`:
                 return '⚡';
+            case `/src/scripts/hack.js`:
+                return '🧨💲⚡'
+            
             default:
-                return '❓❓'
+                return `❓${filename}❓`
         }
     }
 

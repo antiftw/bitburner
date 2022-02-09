@@ -31,6 +31,18 @@ export class ExtendedPublicServer extends PublicServer {
                 throw new Exception(`Property name ${property} does not exist.`)
         }
     }
+
+    actualize() {
+        this.money = this.fetch('money');
+        this.maxMoney = this.fetch('maxMoney');
+        this.usedRam = this.fetch('usedRam');
+        this.maxRam = this.fetch('maxRam');
+        this.rootAccess = this.fetch('rootAccess');
+        this.security = this.fetch('security');
+        this.minSecurity = this.fetch('minSecurity');
+        this.portsRequired = this.fetch('portsRequired');
+        this.requiredHackingLevel = this.fetch('requiredHackingLevel');
+    }
     async nuke(){
         await this.ns.nuke(this.name);
     }

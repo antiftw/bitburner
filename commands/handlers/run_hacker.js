@@ -7,20 +7,12 @@ import { HackingHandler } from '/src/core/HackingHandler';
 export async function main(ns) {
     // This step loops through all our servers, and sees if they need to be enslaved
     // (read: wgh files copied + instructed to attack a target)
-    let context = 'LOOP13';
+    let context = 'LOOP10';
     try{
-        let force = ns.args[0];
-        if(typeof force === 'undefined') {
-            force = false;
-        }
-        let ch = new ConfigurationHandler(ns);
-        await ch.init();
-        let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_hacker);
-
+        let verbose = false;
         let hacker = new HackingHandler(ns, verbose);
-        await hacker.execute(force);
-
+        let force = false;
+        await hacker.run(force);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'HACKER');

@@ -9,9 +9,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let botnet = new BotnetManager(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_botnet);
+        let botnet = new BotnetManager(ns, verbose);
         await botnet.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.runPublic}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'BOTCMD');

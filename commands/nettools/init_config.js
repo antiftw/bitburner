@@ -17,16 +17,6 @@ export async function main(ns) {
         let budget = new BudgetHandler(ns, false, false);
         // Pass 'true' to force initialize, resetting the budgets to zero
         await budget.init(true);
-        let config = ch.getConfig('main');
-        
-        let path = config.process.commandPath;
-        // Clear previous data to prevent unexpected behaviour
-        await ns.run(`${path}data/remove_data.js`)
-        //await ns.run(`${path}nettools/scan_all.js`);
-        // Wait a bit to make sure scan is complete
-        await ns.asleep(2000);
-        await ns.run(`${path}nettools/analyze_all.js`);
-
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e);

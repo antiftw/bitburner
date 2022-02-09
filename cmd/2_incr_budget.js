@@ -10,15 +10,16 @@ export async function main(ns) {
     let context = 'LOOP_2';
     let eh = new ExceptionHandler(ns, context);
     try{
-        
+
         let forceRefresh = ns.args[0];
         let amount = ns.args[1];
-        let verbose = false;
-        let logger = new Logger(ns, verbose, context);
-        let bh = new BudgetHandler(ns);
         let ch = new ConfigurationHandler(ns);
-        
         let config = ch.getConfig('main');
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.incr_budget);
+        let logger = new Logger(ns, verbose, context);
+        let bh = new BudgetHandler(ns, verbose);
+
+
         if(forceRefresh) {
             bh.init();
         }
@@ -58,7 +59,6 @@ export async function main(ns) {
         }catch(e){
             eh.handle(e, 'INCBUD');
         }
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.divdBudget}`)
     }catch(e){
         eh.handle(e, 'INCBUD');
     }

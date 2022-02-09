@@ -8,11 +8,11 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let scanner = new BotnetScanner(ns);
-        await scanner.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.scanPublic}`);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.scan_botnet);
+        let scanner = new BotnetScanner(ns, verbose);
+        await scanner.execute();
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
-        eh.handle(e, 'SCABOT');
+        eh.handle(e, 'SCAN-BOT');
     }
 }

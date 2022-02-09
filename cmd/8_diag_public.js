@@ -9,9 +9,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let analyzer = new PublicAnalyzer(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.diag_public);
+        let analyzer = new PublicAnalyzer(ns, verbose);
         await analyzer.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.diagnoseHacknet}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'DIAPUB');

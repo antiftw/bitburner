@@ -18,14 +18,16 @@ export class ServerScanner {
         this.structureFile;
     }
     /**
-     * Run the actual scanner, traversing the network and saving the names of all servers that were observed
+     * Execute the actual scanner, traversing the network and saving the names of all servers that were observed
      */
-    async run(){
+    async execute(write = true){
         try{
             this.init();
             this.scanNetwork();
             this.logger.notify(`Scan complete -> ${this.servers.length} server(s) detected.`);
-            await this.file.writeJson(this.structureFile, this.servers);
+            if(write){
+                await this.file.writeJson(this.structureFile, this.servers);
+            }
         }catch(e) {
             this.logger.log(`Error scanning network, exception:  ${e}`)
         }

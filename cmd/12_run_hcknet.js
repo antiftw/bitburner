@@ -9,9 +9,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let hacknet = new HacknetManager(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_hcknet);
+        let hacknet = new HacknetManager(ns, verbose);
         await hacknet.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.runHacker}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'HCKCMD');

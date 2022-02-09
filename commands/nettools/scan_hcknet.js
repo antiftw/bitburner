@@ -10,7 +10,7 @@ export async function main(ns) {
     let context = 'SCANHCK';
     try{
         let scanner = new HacknetScanner(ns);
-        await scanner.run();
+        await scanner.execute();
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e);

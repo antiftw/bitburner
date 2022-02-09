@@ -1,4 +1,4 @@
-import { Logger } from "../tools/Logger";
+import { Logger } from "/src/tools/Logger";
 
 /** @param {NS} ns **/
 export async function main(ns) {
