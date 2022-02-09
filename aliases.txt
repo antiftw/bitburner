@@ -29,8 +29,10 @@ alias network-run="run /src/commands/handlers/run_netwrk.js"
 alias spread="run /src/scripts/spread.js"
 alias hack-home="run /src/scripts/hack.js"
 alias trace="run /src/commands/nettools/exec_tracer.js"
+alias crawl="run /src/commands/nettools/run_crawler.js"
 
 # Core
 alias init="run /src/commands/initialize.js"
 alias main="run /src/cmd/1_init_config.js"
 alias start="run /src/commands/start.js"
+

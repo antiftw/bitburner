@@ -38,8 +38,8 @@ export async function main(ns) {
         //let handle = ns.getPortHandle(port.id);
         //ns.tprint(handle.peek());\
 
-        logger.notify(`asd ${JSON.stringify(config) }`)
-
+        logger.notify(`asd ${ns.ls('') }`)
+        ns.ls()
 
         
     
