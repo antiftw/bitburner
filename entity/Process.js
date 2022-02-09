@@ -1,12 +1,12 @@
 /**
- * Class to represent a process to be handled by the ProcessHandler
- * @notused
+ * Class to represent a process
  */
 export class Process{
-    constructor(pid, name, threads, server){
+    constructor(pid, filename, server, args = {}, threads = 1){
         this.pid = pid
-        this.name = name;
-        this.threads = threads;
+        this.filename = filename;
         this.server = server;
+        this.args = args;
+        this.threads = threads;
     }
 }

@@ -9,9 +9,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let publicManager = new PublicManager(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_public);
+        let publicManager = new PublicManager(ns, verbose);
         await publicManager.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.runHacknet}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'PUBCMD');

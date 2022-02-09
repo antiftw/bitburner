@@ -9,11 +9,12 @@
 
 This is an attempt to tackle the Bitburner game, by automating ... everything (!) (well it does not actually - yet - but that is / was the goal at least :) )
 
-There's a lot still to be done, but the start is there, there is a main loop that awaits budget (which you can add using the command ```budget-add```) and then divides it between the configured managers, which will spend it to upgrade their respective networks. Then the final handler looks if there are servers that require infection and runs scripts on them. And then it starts all over again, until inifinity... ^^
+There's a lot still to be done, but the start is there, there is a main loop (boot it up with the command ```start```, see optional options below) that awaits budget (which you can add using the command ```budget-add```) and then divides it between the configured managers, which will spend it to upgrade and/or expand their respective networks. Then the final handler looks if there are servers that require infection and runs scripts on them. And then it starts all over again, until inifinity... ^^
 
 ### Next on the list:
-- Optimization of the infection process
-- 
+- Optimization of the enslavement process (done for now)
+- Central config for the verbosity (done)
+- ...
 
 ## Project overview
 The project is divided in several parts:
@@ -31,33 +32,33 @@ The project is divided in several parts:
     - configuration (DONE)
     - file (DONE)
     - logging (output to screen and logs) (DONE-ISH)
-    - exceptions (WIP)
+    - exceptions (DONE-ISH)
     - processes (EARLY STAGE)
     - ports (EARLY STAGE)
-    - hacking (NEEDS OPTIMIZATION)
+    - hacking (DONE-ISH)
 - entities (objects):
     - servers (DONE) (to contain al server specific data + functionality, organized per type and requirements)
     - exception (DONE) (to handle errors)
     - player (WIP) (to handle player functionality + data)
     - process (WIP) (to encapsulate the whole script execution)
-- 'wgh' scripts (stands for the three possible actions: w(eaken), g(row) and h(ack)) (WIP)
-- old scripts (from learning the game, and some quick start scripts)
+- 'wgh' scripts (stands for the three possible actions: w(eaken), g(row) and h(ack)) (DONE-ISH)
+- old scripts (from learning the game, and some quick start scripts, inspirational)
 
 ## Important commands
 For a full overview, there is a text file in the project root (/aliases.txt) where all the custom aliases are listed. This section will shortly mention and explain the most important ones. Do note that you will have to manually create these aliases before they work (```alias="run /path/to/script.js"```).
 
-- ```main```: runs the main loop (```run /src/cmd/1_init_config.js```)
+- ```start```: runs the main loop (```run /src/commands/start.js```)
     - optional arguments: 
         - ```--force```: 
         whether we want to rewrite the configuration file, (re)-initialize the budget files
         - ```--resupply[=<amount>]```:
         whether we want to allocate an amount to the budget automatically when starting up default value: ```'1b'``` for 1 billion
-
+        
 - ```init```: initializes the system, by writing a config file
 - ```kill-all```: [deprecated] custom kill script -> tries and kill the handlers - which are looping scripts - without killing the hack scripts running on the home server
 
 - ```budget-add <amount>```: adds a certain amount to the general budget, so that the budgetmanager can pick 
-                         it up and distribute it. Certain multipliers allowed (type ```budget-add --help```)
+                         it up and distribute it. Certain multipliers allowed (type ```budget-add --help``` for more info)
 - ```scan-all```: scans all the different networks, saving the structure to a file
 - ```diagnose-all```: diagnoses/analyzes all networks, savind the structure + server properties to a file
 - ```scan-diag```: combines the '```scan-all```' and '```diagnose-all```' commands
@@ -70,12 +71,8 @@ For a full overview, there is a text file in the project root (/aliases.txt) whe
         - query: 
             - (partial) ```['botnet', 'hacknet', 'public']``` when ```queryType === 'network'```
             - (partial) ```<servername>``` when ```queryType === 'server'```
-- ```start```: [**deprecated**] starts the main loop - WARNING: has issues, will not always work as expected, due to asynchronous processes not respecting the await - problem was solved by rewriting the loop to the one described in ```main```
-    - optional options: 
-      - ```--force``` (also executes init)
-      - ```--resupply[=<amount>]``` (automatically adds an amount to the budget):
-         - where ```<amount>``` : 
-            - Can be any amount, int or float (using a '.')
-            - Also understands the argument syntax from budget-add (see above)
-            - Default value: '1b' (for 1 billion)
+
   
+# Configuration settings
+
+// todo: write short explanation of most important config

@@ -5,8 +5,8 @@
 export class Logger{
     /**
      * Constructor
-     * @param {mixed} ns 
-     * @param {bool} verbose whether we want output
+     * @param {mixed} ns
+     * @param {int} verbose whether we want output (0 = none; 1 = only notifications; 2 = all output)
      * @param {string} context where the logger is created
      * @param {bool} timestamp whether we want to timestamp the messages
      */
@@ -28,7 +28,7 @@ export class Logger{
         let line = stamp + '[LOGGER] ' + this.prefix + msg;
         if(timestamp || this.timestamp)
             stamp = `[ ${this.currentTime()} ] `;
-        if(this.verbose)
+        if(this.verbose === 2)
             this.ns.tprint(line);
         this.ns.print(line);
     }
@@ -63,7 +63,9 @@ export class Logger{
             stamp = `[ ${this.currentTime()} ] `;
 
         let line = stamp + '[NOTIFY] ' + this.prefix + msg;
-        this.ns.tprint(line)
+        if(this.verbose > 0)
+            this.ns.tprint(line);
+        
     }
 
     /**
@@ -124,4 +126,5 @@ export class Logger{
     enableLog(fn) {
         this.ns.enableLog(fn);
     }
+
 }

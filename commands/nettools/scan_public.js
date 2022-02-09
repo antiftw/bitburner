@@ -10,7 +10,7 @@ export async function main(ns) {
     let context = 'SCANPUB';
     try{
         let scanner = new PublicScanner(ns, true);
-        await scanner.run();
+        await scanner.execute();
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e);

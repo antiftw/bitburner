@@ -8,9 +8,9 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let analyzer = new HacknetAnalyzer(ns);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.diag_hcknet);
+        let analyzer = new HacknetAnalyzer(ns, verbose);
         await analyzer.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.runBotnet}`);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e, 'DIAHCK');

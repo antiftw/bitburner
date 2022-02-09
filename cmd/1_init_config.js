@@ -11,18 +11,15 @@ export async function main(ns) {
         let forceRefresh = ns.args[0];
         let resupply = ns.args[1];
         let resupplyAmount = '1b';
-        let verbose = false;
-        let logger = new Logger(ns, verbose, context);
+
         let ch = new ConfigurationHandler(ns);
-
-        logger.line(50, true)
-        logger.notify(`Iteration started at ${logger.currentTime()}`)
-        logger.line(50, true)
-
-        logger.log(`initializing configuration`)
         await ch.init();
         let config = ch.getConfig('main');
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.init_config);
+
+        let logger = new Logger(ns, verbose, context);
         
+        logger.log(`Configuration initialized`);
         let port = config.ports.find(port => port.purpose = 'kill-loop')
         let killSignalFromCommand = ns.readPort(port.id);
         if(killSignalFromCommand !== 'NULL PORT DATA') {
@@ -46,11 +43,6 @@ export async function main(ns) {
                 resupplyAmount = parts[1]
             }
             resupply = true;
-        }
-        if(resupply) {
-            ns.spawn(`${config.main.cmdPath}${config.main.steps.incrBudget}`, 1, forceRefresh, resupplyAmount)
-        }else{
-            ns.spawn(`${config.main.cmdPath}${config.main.steps.incrBudget}`, 1, forceRefresh)
         }
     }catch(e){
         let eh = new ExceptionHandler(ns, context);

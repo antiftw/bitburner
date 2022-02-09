@@ -10,7 +10,7 @@ export async function main(ns) {
         let mode = ns.args[0];
         let allowedArguments = ['--home', '--remote', '--all' ];
         if(typeof mode === 'undefined' || !allowedArguments.includes(mode)) {
-            mode = 'home';
+            mode = '--home';
         }
 
         let verbose = true;
@@ -28,8 +28,7 @@ export async function main(ns) {
         let handlerPath = config.process.handlerPath;
         let commandPath = config.process.commandPath;
         let cmdPath = config.main.cmdPath;
-
-        
+       logger.log(`mode:  ${mode}`)
        
         if(mode === '--all' || mode == '--home' ) {
              // signal the loop to stop looping. sometimes the kill wont do the trick
@@ -40,7 +39,7 @@ export async function main(ns) {
              await ns.kill(`${handlerPath}run_hcknet.js`, homeServer);
              await ns.kill(`${handlerPath}run_netwrk.js`, homeServer);
              await ns.kill(`${handlerPath}run_botnet.js`, homeServer);
-             await ns.kill(`${commandPath}loop/start.js`, homeServer);
+             await ns.kill(`${commandPath}start.js`, homeServer);
              await ns.kill(`${handlerPath} '0_init_looper.js`, homeServer);
              await ns.kill(`${handlerPath} '1_init_config.js`, homeServer);
              await ns.kill(`${handlerPath} '2_incr_budget.js`, homeServer);

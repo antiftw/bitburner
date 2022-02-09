@@ -74,25 +74,49 @@ export class PublicScanner extends ServerScanner {
         return servers;
     }
 
+
     /**
      * Given a specified host, find the hops that are between home and that host
      * @param {string} host to find a path to
      */
-    async trace(host) {
+    trace(host) {
 
         // See if we can find the target host
-        let target = this.servers.find(server => server.name === host.name);
+        let target = this.servers.find(server => server.name === host);
         if(typeof target === 'undefined') {
-            throw new Exception('Host ' + host.getName() + ' not found.')
+            throw new Exception('Host ' + host + ' not found.')
         }
-
         let hops = [];
-        while(target.source !== 'null'){
-
+        let arrivedHome = false;
+        while(!arrivedHome){
+            // add the target itself
             hops.push(target);
+
+            // set the new target to the source of the old target
             let source = target.source;
-            target = this.servers.find(server => server.getName() === source);
+            target = this.servers.find(server => server.name === source);
+
+            if(target.name === 'home') {
+                let home = new PublicServer(this.ns, 'home', null);
+                hops.push(home);
+                arrivedHome = true;
+            }
         }
+        return hops;
+    }
+
+    printHops(target) {
+        let hops = this.trace(target);
+        
+        let output = '';
+        for(let index = 0; index < hops.length; index++) {
+            let srv = hops[index];
+           if(typeof srv !== 'undefined') {
+                output = `[ ${srv.name} ] => ${output}`;
+           }
+        }
+        // remove the last => before printing
+        this.ns.tprint(output.substring(0, output.length - 3));
     }
 
     /**
@@ -100,12 +124,18 @@ export class PublicScanner extends ServerScanner {
      * @param {string} host to get a connectstring for
      * @returns the string that can be used to connect to the specified host
      */
-    getConnectString(host){
+    getConnectString(host, print = false){
         let hops = this.trace(host);
+        // remove last server, since that is the home server itsself, and we cont need to connect there
+        hops.pop();
+        this.ns.tprint(hops.length);
         let string = '';
-        for(let index = 0; index < hops.length; index++) {
+        for(let index = hops.length -1; index >= 0; index--) {
             let hop = hops[index];
-            string = string +  ' connect ' +  hop.getName() + ';'
+            string = string +  ' connect ' +  hop.name + ';'
+        }
+        if(print) {
+            this.ns.tprint(string);
         }
         return string;
     }

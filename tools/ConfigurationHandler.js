@@ -37,23 +37,40 @@ export class ConfigurationHandler {
                 ],
                 main: {
                     cmdPath: '/src/cmd/',
-                    // @todo: integrate this instead of the current solution, maybe allowing specific scripts to overwrite this value
+                    heartbeat: true, // this actually controls the loop, when this === false, the main loop stops
+                    enabled: true,   // this defines whether actions are defined, when this === false, the loop still runs, but nothing is done
+                    sleepDuration: 2000,
+                    heartbeatDuration: 1000 * 60 * 10, // interval of heartbeat notification
                     // Manage the level of verbosity of the scripts
-                    verbosity:1,
+                    verbosity: {
+                        // possible values:
+                        // 0 : no output
+                        // 1 : only notifications
+                        // 2 : full output
+                        general: 0,
+                        overrides: {
+                            // we can place specific parts of the application here if we want to override their verbosity
+                            // for example (for each script in /src/cmd):
+                            // init_config: 1
+                        }
+                    },
                     hacking: {
                         path: '/src/wgh/',
                         scripts: [
                             {
                                 name: 'weaken',
                                 file: 'w.js',
+                                ram: 1.75
                             },
                             {
                                 name: 'grow',
                                 file: 'g.js',
+                                ram: 1.75
                             },
                             {
                                 name: 'hack',
-                                file: 'h.js'
+                                file: 'h.js',
+                                ram: 1.7
                             },
                         ],
                     },
@@ -72,8 +89,10 @@ export class ConfigurationHandler {
                         runPublic: '11_run_public.js',
                         runHacknet: '12_run_hcknet.js',
                         runHacker: '13_run_hacker.js',
-                
                     },
+                    exec : {
+
+                    }
                 },
                 botnet : {
                     data_file: '/src/data/botnet_data.txt',
@@ -115,6 +134,7 @@ export class ConfigurationHandler {
                     nettoolPath: '/src/commands/nettools/',
                     processFile: '/src/proc.txt',
                     logDirectory: '/src/logs/',
+                    running:'/src/running/proc.txt',
                     defaults : {
                         sleepDuration : 60 * 5 * 1000 // default 5 min
                     },
@@ -122,23 +142,29 @@ export class ConfigurationHandler {
                         addBudget: {
                             file: 'add_budget.js'
                         },
+                        // does full init, including a scan + analyze, not useful in loop
                         initialize: {
                             file: 'initialize.js'
+                        },
+                        initConfig: {
+                            file: 'init_config.js'
                         },
                         // Namely, one that is not managed by the processHandler. However, we do need a place to configure the sleepduration.
                         processHandler: {
                             file: 'run_process.js',
-                            param: { } 
+                            param: { }
                         },
                         budgetHandler: {
                             file: 'run_budget.js',
                             // only one param atm. if these increase we need to think about how to properly pass these to the process
-                            param: { } 
+                            param: { }
                         },
+                        //
                         networkHandler: {
                             file: 'run_netwrk.js',
                             param: { }
                         },
+                        // (Server) Managers
                         botnetManager: {
                             file: 'run_botnet.js',
                             param: {}
@@ -155,6 +181,34 @@ export class ConfigurationHandler {
                             file: 'run_public.js',
                             param: { }
                         },
+                        // Serverscanners
+                        publicScanner: {
+                            file: 'scan_public.js',
+                            param: { }
+                        },
+                        botnetScanner: {
+                            file: 'scan_botnet.js',
+                            param: { }
+                        },
+                        hacknetScanner: {
+                            file: 'scan_hcknet.js',
+                            param: { }
+                        },
+                        // Serveranalyzers
+                        publicAnalyzer: {
+                            file: 'diag_public.js',
+                            param: { }
+                        },
+                        botnetAnalyzer: {
+                            file: 'diag_botnet.js',
+                            param: { }
+                        },
+                        hacknetAnalyzer: {
+                            file: 'diag_hcknet.js',
+                            param: { }
+                        },
+
+
                     }
                 }
             }, this.configs[0]);
@@ -180,7 +234,7 @@ export class ConfigurationHandler {
     /**
      * Reads the config from file into local variable
      * @param {string} name name of the configuration(file)
-     * @returns 
+     * @returns {void}
      */
     readConfig(name) {
         try{
@@ -205,5 +259,17 @@ export class ConfigurationHandler {
             return this.eh.handle(e, 'GETCFG');
         }
     }
-
+    determineVerbosity(override) {
+        let verbosity;
+        if(this.config === {} || typeof this.config.main.verbosity.general === 'undefined') {
+            verbosity = 0;
+        }
+        if(typeof override !== 'undefined') {
+            verbosity =  override;
+        }
+        
+        verbosity = this.config.main.verbosity.general;
+        this.verbose = verbosity;
+        return verbosity;
+    }
 }

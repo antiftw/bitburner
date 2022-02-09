@@ -9,11 +9,11 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let scanner = new PublicScanner(ns, true);
-        await scanner.run();
-        ns.spawn(`${config.main.cmdPath}${config.main.steps.scanHacknet}`);
+        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.scan_public);
+        let scanner = new PublicScanner(ns, verbose);
+        await scanner.execute();
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
-        eh.handle(e, 'SCAPUB');
+        eh.handle(e, 'SCAN-PUB');
     }
 }
