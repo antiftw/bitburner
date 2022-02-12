@@ -34,6 +34,11 @@ export class ConfigurationHandler {
                         purpose: 'kill-loop',
                         payload: ['int']
                     },
+                    {
+                        id:3,
+                        purpose: 'request-reinfection',
+                        payload: ['int']
+                    }
                 ],
                 main: {
                     cmdPath: '/src/cmd/',
@@ -41,54 +46,129 @@ export class ConfigurationHandler {
                     enabled: true,   // this defines whether actions are defined, when this === false, the loop still runs, but nothing is done
                     sleepDuration: 2000,
                     heartbeatDuration: 1000 * 60 * 10, // interval of heartbeat notification
-                    // Manage the level of verbosity of the scripts
-                    verbosity: {
-                        // possible values:
-                        // 0 : no output
-                        // 1 : only notifications
-                        // 2 : full output
-                        general: 0,
-                        overrides: {
-                            // we can place specific parts of the application here if we want to override their verbosity
-                            // for example (for each script in /src/cmd):
-                            // init_config: 1
-                        }
-                    },
+                    // Manage the level of verbosity of the scripts,  possible values:
+                    // 0 : no output
+                    // 1 : only notifications
+                    // 2 : full output
+                    verbosity: 0,
                     hacking: {
                         path: '/src/wgh/',
-                        scripts: [
+                        configurations: [
                             {
-                                name: 'weaken',
-                                file: 'w.js',
-                                ram: 1.75
+                                // Config 1: 3 separate scripts that are kicked off by the C&C process
+                                scripts: [
+                                    {
+                                        name: 'weaken',
+                                        file: 'w.js',
+                                        ram: 1.75
+                                    },
+                                    {
+                                        name: 'grow',
+                                        file: 'g.js',
+                                        ram: 1.75
+                                    },
+                                    {
+                                        name: 'hack',
+                                        file: 'h.js',
+                                        ram: 1.7
+                                    },
+                                ],
                             },
                             {
-                                name: 'grow',
-                                file: 'g.js',
-                                ram: 1.75
-                            },
-                            {
-                                name: 'hack',
-                                file: 'h.js',
-                                ram: 1.7
-                            },
+                                scripts: [
+                                    {
+                                        name: 'wgh',
+                                        file: 'hack.js'
+                                    }
+                                ]
+                            }
                         ],
                     },
                     steps: {
-                        initLoop: '0_init_looper.js',
-                        initConfig: '1_init_config.js',
-                        incrBudget: '2_incr_budget.js',
-                        divdBudget: '3_divd_budget.js',
-                        scanBotnet: '4_scan_botnet.js',
-                        scanPublic: '5_scan_public.js',
-                        scanHacknet: '6_scan_hcknet.js',
-                        diagnoseBotnet: '7_diag_botnet.js',
-                        diagnosePublic: '8_diag_public.js',
-                        diagnoseHacknet: '9_diag_hcknet.js',
-                        runBotnet: '10_run_botnet.js',
-                        runPublic: '11_run_public.js',
-                        runHacknet: '12_run_hcknet.js',
-                        runHacker: '13_run_hacker.js',
+                        initLoop: {
+                            file: '0_init_looper.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        initConfig: {
+                            file: '1_init_config.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        incrBudget: {
+                            file: '2_incr_budget.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        divdBudget: {
+                            file: '3_divd_budget.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        scanBotnet: {
+                            file: '4_scan_botnet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        scanPublic: {
+                            file: '5_scan_public.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        scanHacknet: {
+                            file: '6_scan_hcknet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        diagnoseBotnet: {
+                            file: '7_diag_botnet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        diagnosePublic: {
+                            file: '8_diag_public.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        diagnoseHacknet: {
+                            file: '9_diag_hcknet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        runBotnet: {
+                            file: '10_run_botnet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        runPublic: {
+                            file: '11_run_public.js',
+                            enabled: true,
+                            // only use to override
+                            verbosity: 1,
+                        },
+                        runHacknet: {
+                            file: '12_run_hcknet.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 1,
+                        },
+                        runHacker: {
+                            file: '13_run_hacker.js',
+                            enabled: true,
+                            // only use to override
+                            //verbosity: 2,
+                        },
                     },
                     exec : {
 
@@ -260,15 +340,23 @@ export class ConfigurationHandler {
         }
     }
     determineVerbosity(override) {
-        let verbosity;
-        if(this.config === {} || typeof this.config.main.verbosity.general === 'undefined') {
-            verbosity = 0;
-        }
-        if(typeof override !== 'undefined') {
-            verbosity =  override;
-        }
+        // load config into local datastructure
+        this.readConfig('main');
+        //this.ns.tprint(`override: ${JSON.stringify(this.config)}`)
         
-        verbosity = this.config.main.verbosity.general;
+        let verbosity;
+        if(this.config === {} || this.config.main.verbosity === 'undefined') {
+            // default to full output, since something is clearly wrong
+            verbosity = 2;
+        }
+
+        if(typeof override !== 'undefined' && override !== 0 && override !== null) {
+            // if we have an override
+            verbosity =  override;
+        }else {
+            // use the general setting
+            verbosity = this.config.main.verbosity;
+        }
         this.verbose = verbosity;
         return verbosity;
     }

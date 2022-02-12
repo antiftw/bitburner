@@ -40,6 +40,7 @@ export async function main(ns) {
              await ns.kill(`${handlerPath}run_netwrk.js`, homeServer);
              await ns.kill(`${handlerPath}run_botnet.js`, homeServer);
              await ns.kill(`${commandPath}start.js`, homeServer);
+             await ns.kill(`${commandPath}start.js`, homeServer, '--init');
              await ns.kill(`${handlerPath} '0_init_looper.js`, homeServer);
              await ns.kill(`${handlerPath} '1_init_config.js`, homeServer);
              await ns.kill(`${handlerPath} '2_incr_budget.js`, homeServer);

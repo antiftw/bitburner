@@ -62,17 +62,26 @@ export class PublicManager extends ServerManager{
     /**
      * @inheritdoc
      */
-    async performAction(action) {
+    performAction(action) {
+        let result = {};
         switch(action.name) {
             case 'infect':
                 let servers = this.rootableServers(false);
                 this.infectServers(servers);
+                result = {
+                    success: true,
+                    message: `Infected servers (${servers.length})`
+                }
                 break;
             case 'wait':
             default:
-                this.logger.notify('No new servers to infect, hybernating');
                 this.enabled = false;
+                result =  {
+                    success: true,
+                    message: 'No new servers to infect, hybernating'
+                }
         }
+        return result;
     }
 
     /**
@@ -82,7 +91,7 @@ export class PublicManager extends ServerManager{
         let rootableServers = this.rootableServers(false);
         let rootedServers = this.rootableServers();
         this.logger.log(`Rooted/Rootable servers: ${rootedServers.length} / ${rootableServers.length}`)
-        if(rootableServers.length > rootedServers) {
+        if(rootableServers.length > rootedServers.length) {
             // There still are servers that can be rooted
             this.phase = 0;
         }else {
@@ -154,7 +163,10 @@ export class PublicManager extends ServerManager{
         servers.forEach(srv => {
             this.infect(srv);
         })
-        this.logger.notify(`Run complete: ${servers.length} servers infected.`);
+        if(servers.length > 0) {
+            this.logger.notify(`Run complete: ${servers.length} servers infected.`);
+            this.enabled = false;
+        }
     }
     
     /**
@@ -163,9 +175,20 @@ export class PublicManager extends ServerManager{
      */
     infect(server){
         try{
-            this.infector.infect(server);
+            let result = this.infector.infect(server);
+            if(result.success) {
+                // Update our local datastructure, else we will get stuck in an infinite loop
+                for(let index = 0; index < this.servers.length; index++) {
+                    let srv = this.servers[index];
+                    if(srv.name === server.name) {
+                        this.servers[index].rootAccess = true;
+                        break;
+                    }
+                }
+            }
+            this.logger.log(result.message);
         }catch(e){
-            this.logger.log(`Failed to infect server. Exception: ${JSON.stringify(e)}`);
+            this.eh.handle(e, 'INFECT');
         }
     }
 

@@ -7,10 +7,11 @@ import { ExceptionHandler } from '/src/tools/ExceptionHandler';
  */
 /** @param {NS} ns **/
 export async function main(ns) {
-    let context = 'SCANBOT';
+    let grep = ns.args[0];
+    let context = 'CRAWL-CMD';
     try{
         let crawler = new Crawler(ns, 2);
-        await crawler.crawl();
+        await crawler.crawl(grep);
     }catch(e){
         let eh = new ExceptionHandler(ns, context);
         eh.handle(e);

@@ -115,6 +115,7 @@ export class BudgetHandler {
      * Divide the budget between the different managers to spend.
      */
     divideBudget(){
+
         if(this.generalBudget === 0) {
             throw new Exception(`Cannot divide funds when this.generalBudget is zero.`)
         }

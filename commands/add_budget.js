@@ -47,7 +47,8 @@ export async function main(ns) {
     }
 
     try{
-        let budget = new BudgetHandler(ns);
+        // pass 1 because we want to force the notification output to terminal on this command
+        let budget = new BudgetHandler(ns, 1);
         await budget.init();
         await budget.increaseBudget(amount);
     }catch(e){

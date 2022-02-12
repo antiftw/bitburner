@@ -33,13 +33,20 @@ export async function main(ns) {
         //let current = ns.getPurchasedServers();
         //let exists = fh.fileExists('/src/wgh/w.js', 'srv12.antiftw.nl')
        // logger.log(`Exists : ${JSON.stringify(ns.ps('home'))}`);
-        //let port = config.ports.find(port => port.purpose = 'kill-loop')
+        let port = config.ports.find(port => port.purpose = 'kill-loop')
         //await ns.tryWritePort(port.id, 1);
-        //let handle = ns.getPortHandle(port.id);
-        //ns.tprint(handle.peek());\
-
-        logger.notify(`asd ${ns.ls('') }`)
-        ns.ls()
+        let handle = ns.getPortHandle(port.id);
+        ns.tprint(handle.peek());
+        let player = ns.getPlayer();
+        let server = ns.getServer('alpha-ent');
+        logger.notify(`grow percentage: ${ns.formulas.hacking.growPercent(server, 1, player, 1 )}`)
+        logger.notify(`grow time: ${ns.formulas.hacking.growTime(server, player )}`)
+        logger.notify(`hack chance: ${ns.formulas.hacking.hackChance(server, player )}`)
+        logger.notify(`hack exp: ${ns.formulas.hacking.hackExp(server, player )}`)
+        logger.notify(`hack percent: ${ns.formulas.hacking.hackPercent(server, player )}`)
+        logger.notify(`hack time: ${ns.formulas.hacking.hackTime(server, player )}`)
+        logger.notify(`weaken time: ${ns.formulas.hacking.weakenTime(server, player )}`)
+        
 
         
     

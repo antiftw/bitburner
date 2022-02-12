@@ -12,8 +12,9 @@ This is an attempt to tackle the Bitburner game, by automating ... everything (!
 There's a lot still to be done, but the start is there, there is a main loop (boot it up with the command ```start```, see optional options below) that awaits budget (which you can add using the command ```budget-add```) and then divides it between the configured managers, which will spend it to upgrade and/or expand their respective networks. Then the final handler looks if there are servers that require infection and runs scripts on them. And then it starts all over again, until inifinity... ^^
 
 ### Next on the list:
-- Optimization of the enslavement process (done for now)
+- Optimization of the enslavement process (ongoing)
 - Central config for the verbosity (done)
+- Optimization of the BotnetManager 
 - ...
 
 ## Project overview

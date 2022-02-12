@@ -46,7 +46,7 @@ export async function main(ns) {
                 security: servers[index].security,
                 minSecurity: servers[index].minSecurity,
             })
-            let infectResult = await infector.infect(server);
+            let infectResult = await infector.executeScript(server, script, parameters);
             if(infectResult === 0) {
                 publicInfected++;
             }
@@ -67,7 +67,7 @@ export async function main(ns) {
                 usedRam: botnet[index].usedRam,
                 money: botnet[index].money,
             });
-            let infectResult = await infector.executeHackScript(server, script, parameters);
+            let infectResult = await infector.executeScript(server, script, parameters);
             if(infectResult === 0) {
                 botnetInfected++;
             }

@@ -9,7 +9,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.scan_hcknet);
+        let verbose = ch.determineVerbosity(config.main.steps.scanHacknet.verbosity);
         let scanner = new HacknetScanner(ns, verbose);
         await scanner.execute();
     }catch(e){

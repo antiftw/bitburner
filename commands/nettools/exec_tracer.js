@@ -46,12 +46,15 @@ export async function main(ns) {
         // run scanner without writing, to initialize internal datastructure which is needed for the trace function
         let scanner = new PublicScanner(ns, 2);
         await scanner.execute(false);
-
+        logger.line(112, true);
+        logger.notify('');
         if(mode === 'path') {
             scanner.printHops(target);
         }else {
             scanner.getConnectString(target, true);
         }
+        logger.notify('');
+        logger.line(112, true);
         return 0;
     }catch(e){
         let eh = new ExceptionHandler(ns, context);

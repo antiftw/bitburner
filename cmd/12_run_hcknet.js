@@ -9,7 +9,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_hcknet);
+        let verbose = ch.determineVerbosity(config.main.steps.runHacknet.verbosity);
         let hacknet = new HacknetManager(ns, verbose);
         await hacknet.run();
     }catch(e){

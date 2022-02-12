@@ -8,7 +8,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.scan_botnet);
+        let verbose = ch.determineVerbosity(config.main.steps.scanBotnet.verbosity);
         let scanner = new BotnetScanner(ns, verbose);
         await scanner.execute();
     }catch(e){

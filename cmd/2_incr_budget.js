@@ -15,7 +15,7 @@ export async function main(ns) {
         let amount = ns.args[1];
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.incr_budget);
+        let verbose = ch.determineVerbosity(config.main.steps.incrBudget.verbosity);
         let logger = new Logger(ns, verbose, context);
         let bh = new BudgetHandler(ns, verbose);
 

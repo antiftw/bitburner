@@ -9,7 +9,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_botnet);
+        let verbose = ch.determineVerbosity(config.main.steps.runBotnet.verbosity);
         let botnet = new BotnetManager(ns, verbose);
         await botnet.run();
     }catch(e){

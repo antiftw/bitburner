@@ -9,13 +9,14 @@ import { Logger } from '/src/tools/Logger'
 export class MainLoopHandler {
     constructor(ns, verbose = 0) {
         this.ns = ns;
-        this.verbose = verbose;
         this.context = 'MAIN-LOOP';
+        this.ch = new ConfigurationHandler(ns);
+        this.config;
+  
+        this.verbose = verbose;
         this.logger = new Logger(ns, this.verbose, this.context);
         this.eh = new ExceptionHandler(ns, this.context);
         this.fm = new FileHandler(ns, this.verbose);
-        this.ch = new ConfigurationHandler(ns, this.verbose);
-        this.config;
         this.host = "home";
         this.modules;
         this.path;
@@ -24,6 +25,7 @@ export class MainLoopHandler {
         this.lastBeat = new Date();
         this.heartbeat = 1000 * 60 * 5; // default give us a heartbeat each 5 min -> we can override this in the configuration
         this.previousFortune = this.ns.getServerMoneyAvailable('home');
+        this.phase
     }
 
     async execute(args) {
@@ -67,62 +69,63 @@ export class MainLoopHandler {
                 this.logger.line(50, true);
                 this.logger.notify(`Iteration started at ${this.logger.currentTime()}`);
                 this.logger.line(50, true);
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.initConfig}`, this.args.forceRefresh);
-                    await this.checkModuleStatus(this.steps.initConfig);
+                if(this.steps.initConfig.enabled){
+                    this.executeModule(`${this.path}${this.steps.initConfig.file}`, this.args.forceRefresh);
+                    await this.checkModuleStatus(this.steps.initConfig.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.incrBudget}`, this.args.forceRefresh);
-                    await this.checkModuleStatus(this.steps.incrBudget);
+                if(this.steps.incrBudget.enabled){
+                    this.executeModule(`${this.path}${this.steps.incrBudget.file}`, this.args.forceRefresh);
+                    await this.checkModuleStatus(this.steps.incrBudget.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.divdBudget}`);
-                    await this.checkModuleStatus(this.steps.divdBudget);
+                if(this.steps.divdBudget.enabled){
+                    this.executeModule(`${this.path}${this.steps.divdBudget.file}`);
+                    await this.checkModuleStatus(this.steps.divdBudget.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.scanBotnet}`);
-                    await this.checkModuleStatus(this.steps.scanBotnet);
+                if(this.steps.scanBotnet.enabled){
+                    this.executeModule(`${this.path}${this.steps.scanBotnet.file}`);
+                    await this.checkModuleStatus(this.steps.scanBotnet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.scanPublic}`);
-                    await this.checkModuleStatus(this.steps.scanPublic);
+                if(this.steps.scanPublic.enabled){
+                    this.executeModule(`${this.path}${this.steps.scanPublic.file}`);
+                    await this.checkModuleStatus(this.steps.scanPublic.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.scanHacknet}`);
-                    await this.checkModuleStatus(this.steps.scanHacknet);
+                if(this.steps.scanHacknet.enabled){
+                    this.executeModule(`${this.path}${this.steps.scanHacknet.file}`);
+                    await this.checkModuleStatus(this.steps.scanHacknet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.diagnoseBotnet}`);
-                    await this.checkModuleStatus(this.steps.diagnoseBotnet);
+                if(this.steps.diagnoseBotnet.enabled){
+                    this.executeModule(`${this.path}${this.steps.diagnoseBotnet.file}`);
+                    await this.checkModuleStatus(this.steps.diagnoseBotnet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.diagnosePublic}`);
-                    await this.checkModuleStatus(this.steps.diagnosePublic);
+                if(this.steps.diagnosePublic.enabled){
+                    this.executeModule(`${this.path}${this.steps.diagnosePublic.file}`);
+                    await this.checkModuleStatus(this.steps.diagnosePublic.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.diagnoseHacknet}`);
-                    await this.checkModuleStatus(this.steps.diagnoseHacknet);
+                if(this.steps.diagnoseHacknet.enabled){
+                    this.executeModule(`${this.path}${this.steps.diagnoseHacknet.file}`);
+                    await this.checkModuleStatus(this.steps.diagnoseHacknet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.runBotnet}`);
-                    await this.checkModuleStatus(this.steps.runBotnet);
+                if(this.steps.runBotnet.enabled){
+                    this.executeModule(`${this.path}${this.steps.runBotnet.file}`);
+                    await this.checkModuleStatus(this.steps.runBotnet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.runPublic}`);
-                    await this.checkModuleStatus(this.steps.runPublic);
+                if(this.steps.runPublic.enabled){
+                    this.executeModule(`${this.path}${this.steps.runPublic.file}`);
+                    await this.checkModuleStatus(this.steps.runPublic.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.runHacknet}`);
-                    await this.checkModuleStatus(this.steps.runHacknet);
+                if(this.steps.runHacknet.enabled){
+                    this.executeModule(`${this.path}${this.steps.runHacknet.file}`);
+                    await this.checkModuleStatus(this.steps.runHacknet.file);
                 }
-                if(true){
-                    this.executeModule(`${this.path}${this.steps.runHacker}`, this.args.forceRefresh);
-                    await this.checkModuleStatus(this.steps.runHacker);
+                if(this.steps.runHacker.enabled){
+                    this.executeModule(`${this.path}${this.steps.runHacker.file}`, this.args.forceRefresh);
+                    await this.checkModuleStatus(this.steps.runHacker.file);
                 }
                 this.updateConfig();
             }else {
-                await this.ns.asleep(1000);
+                await this.ns.asleep(5000);
             }
+            await this.ns.asleep(10);
         }
     }
 
@@ -148,7 +151,7 @@ export class MainLoopHandler {
         this.path = this.config.main.cmdPath;
         this.steps = this.config.main.steps;
         this.sleepDuration = this.config.main.sleepDuration;
-        this.verbose = this.config.main.verbosity.general;
+        this.verbose = this.config.main.verbosity;
         // only replace it when defined
         this.heartbeat = typeof this.config.main.heartbeatDuration !== 'undefined' ? this.config.main.heartbeatDuration : this.heartbeat;
     }

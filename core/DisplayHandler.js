@@ -125,7 +125,7 @@ export class DisplayHandler{
 
         if(options.public) {
             this.logger.line();
-            this.logger.log('✔️ Also showing Public');
+            this.logger.log(`✔️ Also showing Public servers: ${this.public.length}`);
             let servers = this.public;
             if(options.rootOnly) {
                 this.public
@@ -205,25 +205,31 @@ export class DisplayHandler{
      * @param {?string} query optional search parameter
      */
     showPublicServer(server, query) {
+        
         let marker = '';
         if(query !== null && server.name.includes(query)) {
             marker = '🔍';
         }
+        
         let scripts = this.getRunningScripts(server);
         let currentSecurity = this.logger.pad(3, server.security.toFixed(0), true);
+
         let minSecurity = this.logger.pad(3, server.minSecurity.toFixed(0), true);
         let security = `[ ${currentSecurity} / ${minSecurity} ]`
+ 
         let name = '[ ' + this.logger.pad(20, server.name) + ' ] ';
         let usedRam = this.logger.pad(8, server.usedRam.toFixed(1));
         let maxRam = this.logger.pad(5, server.maxRam);
         let ram = '[ ' + usedRam + ' / ' + maxRam + ' GB] ';
         let ports = ' [' + this.port(server.portsRequired) + ']';
         let root = (server.rootAccess ? '✔️' : '❌');
+
         let levelHack = '[ ' + this.logger.pad(4, server.requiredHackingLevel , true) + ' ]';
         let curMoney = this.formatPrice(server.money);
         let maxMoney = this.formatPrice(server.maxMoney);
         let money    = '[💰: '+ curMoney + ' / ' + maxMoney +' (₿)]'
         let line = root + ports + levelHack + name + ram + money + security + scripts + marker;
+
         this.ns.tprint(line);
     }
 
@@ -259,6 +265,7 @@ export class DisplayHandler{
      * @returns {string|[obj]}
      */
     getRunningScripts(server, icon = true) {
+
         let active = [];
         let iconOutput = '';
         let ignore = ['/src/commands/show_network.js', '/src/commands/start.js']
@@ -271,8 +278,8 @@ export class DisplayHandler{
             if(ignore.includes(file)) {
                 continue;
             }
+            let icon = this.getScriptIcon(`${file}`);
 
-            let icon = this.getScriptIcon(`${file}`)
             let runningScript  = {
                 target: script.args[0],
                 filename:file,
@@ -292,25 +299,30 @@ export class DisplayHandler{
      * Get the icon corresponding to a script/filename so we can display it
      */
     getScriptIcon(filename) {
-        let scripts = this.config.main.hacking.scripts;
+        let scripts = this.config.main.hacking.configurations[0].scripts;
+        let wghScript = this.config.main.hacking.configurations[1].scripts[0].file;
         let path = this.config.main.hacking.path;
         let weakenScript = scripts.find(script => script.name === 'weaken');
         let growScript = scripts.find(script => script.name === 'grow');
         let hackScript = scripts.find(script => script.name === 'hack');
-
+        let icon = `❓`;
         switch(filename) {
             case `${path}${weakenScript.file}`:
-                return '🧨';
+                icon = '🧨';
+                break;
             case `${path}${growScript.file}`:
-                return '💲💲';
+                icon = '💲💲';
+                break;
             case `${path}${hackScript.file}`:
-                return '⚡';
-            case `/src/scripts/hack.js`:
-                return '🧨💲⚡'
-            
+                icon = '⚡';
+                break;
+            case `${path}${wghScript}`:
+                icon = '🧨💲⚡';
+                break;
             default:
-                return `❓${filename}❓`
+                icon = `❓${filename}❓`
         }
+        return icon;
     }
 
     /**

@@ -9,7 +9,7 @@ export async function main(ns) {
 
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.divd_budget);
+        let verbose = ch.determineVerbosity(config.main.steps.divdBudget.verbosity);
         let budget = new BudgetHandler(ns, verbose);
         await budget.run();
     }catch(e){

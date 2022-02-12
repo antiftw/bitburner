@@ -11,21 +11,15 @@ export async function main(ns) {
         let forceRefresh = ns.args[0];
         let resupply = ns.args[1];
         let resupplyAmount = '1b';
-
         let ch = new ConfigurationHandler(ns);
+        // Action of this step => initialize configuration and write that config to a file
         await ch.init();
+        // Fetch the config so we can use it, since we need it to determine the verbosity for this step
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.init_config);
-
+        let verbose = ch.determineVerbosity(config.main.steps.initConfig.verbosity);
         let logger = new Logger(ns, verbose, context);
-        
-        logger.log(`Configuration initialized`);
-        let port = config.ports.find(port => port.purpose = 'kill-loop')
-        let killSignalFromCommand = ns.readPort(port.id);
-        if(killSignalFromCommand !== 'NULL PORT DATA') {
-            logger.notify(`Kill signal received: terminating...`)
-            return 1;
-        }
+
+        // Check the arguments
         if(typeof forceRefresh === 'undefined') {
             forceRefresh = false;
         }else if(forceRefresh ==='--force' || forceRefresh === '--f'){

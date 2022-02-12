@@ -9,7 +9,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_public);
+        let verbose = ch.determineVerbosity(config.main.steps.runPublic.verbosity);
         let publicManager = new PublicManager(ns, verbose);
         await publicManager.run();
     }catch(e){

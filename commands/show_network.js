@@ -31,7 +31,7 @@ export async function main(ns) {
             return;
         }
 
-        let display = new DisplayHandler(ns, true);
+        let display = new DisplayHandler(ns, 0);
         await display.init();
         await display.showNetwork(queryType, query);
 

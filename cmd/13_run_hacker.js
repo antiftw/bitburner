@@ -16,7 +16,7 @@ export async function main(ns) {
         let ch = new ConfigurationHandler(ns);
         await ch.init();
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.run_hacker);
+        let verbose = ch.determineVerbosity(config.main.steps.runHacker.verbosity);
 
         let hacker = new HackingHandler(ns, verbose);
         await hacker.execute(force);

@@ -26,13 +26,15 @@ export class HackingHandler {
         this.files = [];
         this.path;
         this.running;
+        this.minMoney = 0;
+        this.configuration = 1;
     }
     init() {
         this.config = this.ch.getConfig('main');
         this.loadServers();
-        this.files = this.config.main.hacking.scripts;
+        this.files = this.config.main.hacking.configurations[this.configuration].scripts;
         this.path = this.config.main.hacking.path;
-        
+        this.minMoney = this.determineMinMoney()
     }
 
     loadServers() {
@@ -48,8 +50,15 @@ export class HackingHandler {
             server.actualize();
             this.public.push(server);
         })
-
     }
+
+    async exectute2(force = false) {
+        // todo: implement new way to wgh
+        // using: https://github.com/danielyxie/bitburner/blob/dev/markdown/bitburner.hackingformulas.md
+        //    and https://bitburner.readthedocs.io/en/latest/advancedgameplay/hackingalgorithms.html
+        //this.ns.formulas.hacking.
+    }
+
     async execute(force = false) {
         // load config etc
         this.init();
@@ -130,6 +139,7 @@ export class HackingHandler {
             let result = await this.ns.scp('/src/tools/Logger.js', server.name);
             this.logger.log(`SCP '/src/tools/Logger.js' to ${server.name} => result: ${result}`)
         }
+
         if (server.fetch('security') > securityThreshold) {
             // If the server's security level is above our threshold, weaken it
             script = this.files.find(script => script.name === 'weaken');
@@ -139,6 +149,12 @@ export class HackingHandler {
         } else {
             // Otherwise, hack it
             script = this.files.find(script => script.name === 'hack');
+        }
+        // if we have only one script, it contains all 3 functions
+        if(this.files.length === 1) {
+            this.logger.log(this.files.length)
+            script = this.files.find(script => script.name === 'wgh');
+            this.logger.log(`script: ${JSON.stringify(script)}`)
         }
 
         let target = this.selectTarget(server);
@@ -302,7 +318,7 @@ export class HackingHandler {
                 pub =>  pub.rootAccess
                         && pub.name !== 'home'
                         && pub.requiredHackingLevel <= this.ns.getHackingLevel()
-                        && pub.maxMoney > 1000000000
+                        && pub.maxMoney > this.minMoney
                     )
             // sort on the maximum amount of money
             .sort((a,b) => b.maxMoney - a.maxMoney)
@@ -325,5 +341,18 @@ export class HackingHandler {
 
         // Finally we calculate the money to ram ratio
         return totalAvailableMoney / totalAvailableRam;
+    }
+
+    determineMinMoney() {
+        let maxMoney = 0;
+        this.public.forEach(pub => {
+            maxMoney = pub.maxMoney > maxMoney ? pub.maxMoney : maxMoney;
+        })
+        if(maxMoney > 1000000000) {
+            return 1000000000;
+        }else if(maxMoney > 1000000) {
+            return 1000000;
+        }
+        return 0;
     }
 }

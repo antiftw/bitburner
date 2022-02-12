@@ -8,7 +8,7 @@ export async function main(ns) {
     try{
         let ch = new ConfigurationHandler(ns);
         let config = ch.getConfig('main');
-        let verbose = ch.determineVerbosity(config.main.verbosity.overrides.diag_hcknet);
+        let verbose = ch.determineVerbosity(config.main.steps.diagnoseHacknet.verbosity);
         let analyzer = new HacknetAnalyzer(ns, verbose);
         await analyzer.run();
     }catch(e){

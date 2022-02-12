@@ -147,7 +147,7 @@ export class ServerManager {
     }
 
     /**
-     * Reads the current general budget from file and updates local value
+     * Reads the current general budget from file and updates local values
      * @returns {float} the current budget
      */
     loadBudget() {
@@ -224,14 +224,9 @@ export class ServerManager {
     addBudget(amount) { this.budget += amount; }
 
     // stub functions => implementation located in extended Managers
-    determineOptimalAction() {}
+    determineOptimalAction(){}
     determinePhase(){}
-    performAction(action) {
-        switch(action.name) {
-            case 'action-name':
-            // do the thing decided in determineOptimalAction()
-        }
-    }
+    performAction(action){}
 
     /**
      * Function to get a commom interface for the functionality

@@ -128,14 +128,14 @@ export class PublicScanner extends ServerScanner {
         let hops = this.trace(host);
         // remove last server, since that is the home server itsself, and we cont need to connect there
         hops.pop();
-        this.ns.tprint(hops.length);
+        this.logger.log(`Hops: ${hops.length}`);
         let string = '';
         for(let index = hops.length -1; index >= 0; index--) {
             let hop = hops[index];
             string = string +  ' connect ' +  hop.name + ';'
         }
         if(print) {
-            this.ns.tprint(string);
+            this.logger.notify(string);
         }
         return string;
     }
