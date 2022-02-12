@@ -22,6 +22,7 @@ export async function main(ns) {
         let fh = new FileHandler(ns, verbose);
         let logger = new Logger(ns, verbose, 'TEST')
         logger.notify('TEST ALIVE')
+
         //let manager = new BudgetHandler(ns, verbose);
         //let proces = new ProcessHandler(ns, verbose);
         // let port = new PortHandler(ns, verbose);
@@ -33,19 +34,21 @@ export async function main(ns) {
         //let current = ns.getPurchasedServers();
         //let exists = fh.fileExists('/src/wgh/w.js', 'srv12.antiftw.nl')
        // logger.log(`Exists : ${JSON.stringify(ns.ps('home'))}`);
-        let port = config.ports.find(port => port.purpose = 'kill-loop')
-        //await ns.tryWritePort(port.id, 1);
+        let port = config.ports.find(port => port.purpose = 'request-reassesment')
+       // await ns.tryWritePort(port.id, 1);
         let handle = ns.getPortHandle(port.id);
-        ns.tprint(handle.peek());
+        ns.tprint(handle.read());
         let player = ns.getPlayer();
         let server = ns.getServer('alpha-ent');
+   
+        logger.notify(`srv: ${JSON.stringify(server)}`)
         logger.notify(`grow percentage: ${ns.formulas.hacking.growPercent(server, 1, player, 1 )}`)
-        logger.notify(`grow time: ${ns.formulas.hacking.growTime(server, player )}`)
+        logger.notify(`grow time: ${ns.formulas.hacking.growTime(server, player ) / 1000 / 60}`)
         logger.notify(`hack chance: ${ns.formulas.hacking.hackChance(server, player )}`)
         logger.notify(`hack exp: ${ns.formulas.hacking.hackExp(server, player )}`)
         logger.notify(`hack percent: ${ns.formulas.hacking.hackPercent(server, player )}`)
-        logger.notify(`hack time: ${ns.formulas.hacking.hackTime(server, player )}`)
-        logger.notify(`weaken time: ${ns.formulas.hacking.weakenTime(server, player )}`)
+        logger.notify(`hack time: ${ns.formulas.hacking.hackTime(server, player ) / 1000 / 60}`)
+        logger.notify(`weaken time: ${ns.formulas.hacking.weakenTime(server, player ) / 1000 / 60}`)
         
 
         

@@ -62,12 +62,12 @@ export class PublicManager extends ServerManager{
     /**
      * @inheritdoc
      */
-    performAction(action) {
+    async performAction(action) {
         let result = {};
         switch(action.name) {
             case 'infect':
                 let servers = this.rootableServers(false);
-                this.infectServers(servers);
+                await this.infectServers(servers);
                 result = {
                     success: true,
                     message: `Infected servers (${servers.length})`
@@ -76,10 +76,18 @@ export class PublicManager extends ServerManager{
             case 'wait':
             default:
                 this.enabled = false;
+                this.logger.notify(`No servers to infect, hybernating`);
                 result =  {
                     success: true,
                     message: 'No new servers to infect, hybernating'
                 }
+                if(this.servers.find(srv => srv.requiredHackingLevel === this.ns.getHackingLevel())) {
+                    // this is not completely correct, since we only want to do this once => but how?
+                    // let the other part of the application know we might have a new target to consider
+                    //let port = this.config.ports.find(port => port.purpose = 'request-reassesment');
+                    //await ns.tryWritePort(port.id, 1);
+                }
+               
         }
         return result;
     }
@@ -159,13 +167,14 @@ export class PublicManager extends ServerManager{
      * Infect an array of servers
      * @param {array} servers to be infected
      */
-    infectServers(servers) {
+    async infectServers(servers) {
         servers.forEach(srv => {
             this.infect(srv);
         })
         if(servers.length > 0) {
             this.logger.notify(`Run complete: ${servers.length} servers infected.`);
             this.enabled = false;
+            
         }
     }
     

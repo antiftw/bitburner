@@ -100,7 +100,7 @@ export class HacknetManager extends ServerManager {
     /**
      * @inheritdoc
      */
-    performAction(action) {
+    async performAction(action) {
         this.logger.log(`Performing action: '${action.name}'`)
         this.logger.log(JSON.stringify(action))
         switch(action.name) {

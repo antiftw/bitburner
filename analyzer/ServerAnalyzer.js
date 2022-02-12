@@ -1,4 +1,3 @@
-import { Exception } from '/src/entity/Exception';
 import { FileHandler } from "/src/tools/FileHandler";
 import { ServerManager } from "/src/manager/ServerManager";
 import { ConfigurationHandler } from "/src/tools/ConfigurationHandler";
@@ -34,7 +33,7 @@ export class ServerAnalyzer {
             this.logger.notify(`Analysis complete -> ${this.servers.length} servers analyzed`);
             await this.file.writeJson(this.dataFile, this.servers);
         }catch(e) {
-             this.eh.handle(e, 'SRVRUN');
+             this.eh.handle(e, 'RUN');
         }
     }
 
@@ -49,7 +48,7 @@ export class ServerAnalyzer {
     /**
     * Do the analysis, implementation in extended classes
     */
-    analyze(){} // the actual implementation of the analysis
+    analyze(){}
 
     /**
      * Read the configuration file
@@ -58,7 +57,7 @@ export class ServerAnalyzer {
         try{
             this.config = this.ch.getConfig('main');
         }catch(e) {
-            this.eh.handle(e, 'SRVCFG');
+            this.eh.handle(e, 'LOAD-CONFIG');
         }
     }
 }

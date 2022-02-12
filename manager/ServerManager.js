@@ -41,7 +41,7 @@ export class ServerManager {
                 // Spend all available budget
                 let actResult = false;
                 this.determinePhase();
-                actResult = this.act();
+                actResult = await this.act();
                 if(actResult) {
                     this.logger.log(`Action result: [ ${actResult.message} ] `)
                 }
@@ -169,7 +169,7 @@ export class ServerManager {
      * Determine and perform the next optimal action
      * @returns {obj} = {success, message}
      */
-    act() {
+    async act() {
         try{
             this.logger.log(`Determining optimal action. Budget: ₿ [ ${this.budget.toLocaleString('en')} ]`)
             let action = this.determineOptimalAction();
@@ -207,7 +207,7 @@ export class ServerManager {
             this.logger.log(`left: ₿ ${this.logger.pad(amountOfCharacters, (this.budget - price), true)}`)
 
             // do the actual thing
-            let result = this.performAction(action);
+            let result = await this.performAction(action);
             // do some processing for reporting purposes
             this.analyzeAction(action);
             // update the local budget
@@ -226,7 +226,7 @@ export class ServerManager {
     // stub functions => implementation located in extended Managers
     determineOptimalAction(){}
     determinePhase(){}
-    performAction(action){}
+    async performAction(action){}
 
     /**
      * Function to get a commom interface for the functionality

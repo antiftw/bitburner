@@ -35,8 +35,8 @@ export class ConfigurationHandler {
                         payload: ['int']
                     },
                     {
-                        id:3,
-                        purpose: 'request-reinfection',
+                        id: 3,
+                        purpose: 'request-reassesment',
                         payload: ['int']
                     }
                 ],
@@ -155,7 +155,7 @@ export class ConfigurationHandler {
                             file: '11_run_public.js',
                             enabled: true,
                             // only use to override
-                            verbosity: 1,
+                            //verbosity: 1,
                         },
                         runHacknet: {
                             file: '12_run_hcknet.js',
@@ -212,6 +212,7 @@ export class ConfigurationHandler {
                     commandPath: '/src/commands/',
                     handlerPath: '/src/commands/handlers/',
                     nettoolPath: '/src/commands/nettools/',
+                    processPath: '/src/commands/process/',
                     processFile: '/src/proc.txt',
                     logDirectory: '/src/logs/',
                     running:'/src/running/proc.txt',
@@ -228,6 +229,11 @@ export class ConfigurationHandler {
                         },
                         initConfig: {
                             file: 'init_config.js'
+                        },
+                        // not sure if this is the right place for this one, but not sure where else either
+                        killAll: {
+                            file: 'kill_all.js',
+                            param: '--remote'
                         },
                         // Namely, one that is not managed by the processHandler. However, we do need a place to configure the sleepduration.
                         processHandler: {

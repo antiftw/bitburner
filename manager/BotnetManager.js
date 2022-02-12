@@ -110,7 +110,7 @@ export class BotnetManager extends ServerManager {
      * @param {object} action The action to be performed: {name, price, node}
      * @returns success
      */
-    performAction(action) {
+    async performAction(action) {
         this.logger.log(`action.name: ${action.name}, is_null(action.node): ${action.node === null}`)
         if(action.name === 'upgrade-ram' && action.node === null){
             throw new Exception('Cannot upgrade when node is null.');

@@ -8,29 +8,30 @@ export async function main(ns) {
     let eh = new ExceptionHandler(ns, context);
     try{
         let mode = ns.args[0];
-        let allowedArguments = ['--home', '--remote', '--all' ];
+        let allowedArguments = ['--local', '--remote', '--all' ];
         if(typeof mode === 'undefined' || !allowedArguments.includes(mode)) {
-            mode = '--home';
+            mode = '--local';
         }
 
-        let verbose = true;
+        let verbose = 1;
         let homeServer = 'home';
         
         // todo: encapsulate all this in the processhandler
         //let process = new ProcessHandler(ns, verbose);
         //await process.killProcesses();
-        let ch = new ConfigurationHandler(ns, verbose);
+        let ch = new ConfigurationHandler(ns);
         
-        let file = new FileHandler(ns, verbose);
+        let file = new FileHandler(ns);
         let config = ch.getConfig('main');
         let logger = new Logger(ns, verbose, context);
         let port = config.ports.find(port => port.purpose = 'kill-loop');
         let handlerPath = config.process.handlerPath;
         let commandPath = config.process.commandPath;
         let cmdPath = config.main.cmdPath;
-       logger.log(`mode:  ${mode}`)
+        let output = '';
+        //logger.log(`mode:  ${mode}`)
        
-        if(mode === '--all' || mode == '--home' ) {
+        if(mode === '--all' || mode == '--local' ) {
              // signal the loop to stop looping. sometimes the kill wont do the trick
              // we listen for this interrupt in the beginning of the loop (1_init_config.js)
              await ns.tryWritePort(port.id, 1);
@@ -54,13 +55,15 @@ export async function main(ns) {
              await ns.kill(`${handlerPath} '10_run_botnet.js`, homeServer);
              await ns.kill(`${handlerPath} '11_run_public.js`, homeServer);
              await ns.kill(`${handlerPath} '12_run_hcknet.js`, homeServer);
+             // to output we've killed local
+             output += 'local';
         }
 
         if(mode === '--all' || mode === '--remote') {
-            logger.notify(`Reading files`);
+            logger.log(`Terminating all remote script execution`)
             let botnetServers = file.readJson(config.botnet.data_file);
             let publicServers = file.readJson(config.public.data_file);
-            logger.notify(`Files read, botnet servers: ${botnetServers.length} public servers found: ${publicServers.length}`)
+            logger.log(`Servers identified: botnet => [ ${botnetServers.length} ] public = [ ${publicServers.length} ]`)
             botnetServers.forEach(bot => {
                 let result = ns.killall(bot.name);
                 logger.log(`Killing all scripts on ${bot.name}, success: [ ${result} ]`);
@@ -72,8 +75,17 @@ export async function main(ns) {
                     logger.log(`Killing all scripts on ${pub.name}, success: [ ${result} ]`);
                 }
             })
+            // to output we've killed remote
+            if(output === '') {
+                output += 'remote';
+            }else {
+                output += ' and remote';
+            }
         }
-        ///asdasdasd
+        if(output !== '') {
+            logger.notify(`All ${output} scripts termninated`)
+        }
+
     }catch(e){
        eh.handle(e, 'KILLAL');
     }

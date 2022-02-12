@@ -70,7 +70,7 @@ export class MainLoopHandler {
                 this.logger.notify(`Iteration started at ${this.logger.currentTime()}`);
                 this.logger.line(50, true);
                 if(this.steps.initConfig.enabled){
-                    this.executeModule(`${this.path}${this.steps.initConfig.file}`, this.args.forceRefresh);
+                    this.executeModule(`${this.path}${this.steps.initConfig.file}`, this.args.initConfig);
                     await this.checkModuleStatus(this.steps.initConfig.file);
                 }
                 if(this.steps.incrBudget.enabled){
@@ -118,8 +118,18 @@ export class MainLoopHandler {
                     await this.checkModuleStatus(this.steps.runHacknet.file);
                 }
                 if(this.steps.runHacker.enabled){
+                    // check if we want to reset all servers, because there might be a new target
+                    let port = this.config.ports.find(port => port.purpose = 'request-reassesment');
+                    let output = this.ns.readPort(port.id);
+                    if(output !== 'NULL PORT DATA' && output === 1) {
+                        this.executeModule(
+                            `${this.config.process.processPath}${this.config.process.processes.killAll.file}`,
+                            this.config.process.processes.killAll.param);
+                        await this.checkModuleStatus(this.steps.runHacker.file);
+                    }
                     this.executeModule(`${this.path}${this.steps.runHacker.file}`, this.args.forceRefresh);
                     await this.checkModuleStatus(this.steps.runHacker.file);
+
                 }
                 this.updateConfig();
             }else {
